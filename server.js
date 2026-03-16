@@ -1,4 +1,3 @@
-
 import express from "express";
 import cors from "cors";
 import compression from "compression";
@@ -44,7 +43,6 @@ const io = new Server(server, {
     credentials: true
   }
 });
-
 
 io.on("connection", (socket) => {
 
@@ -106,9 +104,11 @@ app.use(
   cors({
     origin: [
       "http://localhost:5173",
-      "https://handio-frontend.onrender.com"
+      "https://handio-frontend.vercel.app"
     ],
-    credentials: true
+    credentials: true,
+    methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
+    allowedHeaders: ["Content-Type", "Authorization"]
   })
 );
 
@@ -152,4 +152,3 @@ const PORT = process.env.PORT || 5000;
 server.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
 });
-
