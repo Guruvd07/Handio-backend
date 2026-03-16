@@ -38,7 +38,7 @@ const io = new Server(server, {
   cors: {
     origin: [
       "http://localhost:5173",
-      "https://handio-frontend.onrender.com"
+      "https://handio-frontend.vercel.app"
     ],
     methods: ["GET", "POST"],
     credentials: true
