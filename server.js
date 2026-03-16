@@ -49,11 +49,8 @@ io.on("connection", (socket) => {
   console.log("User connected:", socket.id);
 
   socket.on("join", (userId) => {
-
     console.log("User joined room:", userId);
-
     socket.join(userId);
-
   });
 
   socket.on("send_message", async (data) => {
@@ -77,9 +74,7 @@ io.on("connection", (socket) => {
       io.emit("receive_message", newMessage);
 
     } catch (err) {
-
       console.error("Socket message error:", err);
-
     }
 
   });
@@ -100,15 +95,15 @@ app.set("trust proxy", 1);
 app.use(helmet());
 app.use(compression());
 
+/* ===== FIXED CORS ===== */
+
 app.use(
   cors({
     origin: [
       "http://localhost:5173",
       "https://handio-frontend.vercel.app"
     ],
-    credentials: true,
-    methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
-    allowedHeaders: ["Content-Type", "Authorization"]
+    credentials: true
   })
 );
 
