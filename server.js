@@ -134,7 +134,8 @@ app.use("/api/ai", aiRoutes);
 app.get("/api/debug", (req, res) => {
   res.json({
     success: true,
-    message: "Debug route working"
+    version: "NEW BACKEND",
+    time: new Date(),
   });
 });
 app.use("/api/ai/chat", aiChatRoutes);
