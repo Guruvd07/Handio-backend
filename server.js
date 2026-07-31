@@ -108,6 +108,14 @@ app.use(compression());
 
 /* ===== FIXED CORS ===== */
 
+app.post("/hello", (req, res) => {
+  console.log("HELLO ROUTE HIT");
+  res.json({
+    success: true,
+    msg: "Hello Route Works"
+  });
+});
+
 app.use(
   cors({
     origin: [
