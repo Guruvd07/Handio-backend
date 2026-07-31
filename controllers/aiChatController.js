@@ -359,6 +359,10 @@ Requirements:
 
 export const aiChat = async (req, res) => {
   try {
+
+    console.log("============== AI CHAT START ==============");
+    console.log("BODY:", req.body);
+
     const { message, history = [], lastProviders = [] } = req.body;
 
     if (!message || !message.trim()) {
@@ -367,6 +371,7 @@ export const aiChat = async (req, res) => {
         message: "Message is required",
       });
     }
+
 
     const lowerMessage = message.toLowerCase();
     const detectedAction = detectAction(lowerMessage);
@@ -400,6 +405,7 @@ export const aiChat = async (req, res) => {
     }
 
     // STEP 1 — Direct provider name search
+    console.log("STEP 1 : Loading providers");
     const allProviders = await ProviderProfile.find({ verified: true }).populate(
       "userId",
       "name"
@@ -430,6 +436,7 @@ export const aiChat = async (req, res) => {
     }
 
     // STEP 2 — Follow-up actions
+    console.log("STEP 2 : Follow up");
     const followUpResult = handleFollowUp(lowerMessage, lastProviders);
 
     if (followUpResult) {
@@ -437,20 +444,26 @@ export const aiChat = async (req, res) => {
     }
 
     // STEP 3 — Intent extraction (categories fetched once, reused in step 4)
+    console.log("STEP 3 : Loading categories");
     const categories = await ProviderProfile.distinct("category");
 
+    console.log("STEP 4 : Extracting Intent");
     let intent = await extractIntent(message, categories);
+
+    console.log("Intent:", intent);
+    console.log("GENERAL CHAT -> Calling LLM");
 
     if (intent.intent !== "search_provider") {
       const reply = await generateContent(`
-You are Handio AI Assistant.
+        You are Handio AI Assistant.
 
-Answer naturally and briefly.
+        Answer naturally and briefly.
 
-User:
-${message}
-`);
-
+        User:
+        ${message}
+        `);
+       
+      console.log("GENERAL CHAT -> Reply Generated");
       return res.json({
         success: true,
         reply,
@@ -462,6 +475,7 @@ ${message}
     intent = mapCategory(intent, categories);
 
     // STEP 5 — Database search
+    console.log("STEP 5 : Searching Providers");
     const providers = await searchProviders(intent);
 
     if (providers.length === 0) {
@@ -477,6 +491,7 @@ ${message}
 
     // STEP 6 — LLM response formatting
     const providerList = formatProviderList(providers);
+    console.log("STEP 6 : Calling LLM");
     const reply = await generateContent(buildFinalPrompt(message, providerList));
 
     return res.json({
@@ -486,11 +501,13 @@ ${message}
       suggestions: getSuggestions({ providers, category: intent.category }),
     });
   } catch (error) {
+    console.error("=========== AI CHAT ERROR ===========");
     console.error(error);
+    console.error(error.stack);
 
     return res.status(500).json({
-      success: false,
-      message: error.message,
+        success: false,
+        message: error.message,
     });
-  }
+}
 };

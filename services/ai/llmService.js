@@ -8,17 +8,37 @@ const groq = new Groq({
 });
 
 export const generateContent = async (prompt) => {
-  console.log("generateContent() called");
+  try {
+    console.log("========== generateContent() ==========");
+    console.log(prompt);
 
-  const completion = await groq.chat.completions.create({
-    model: "llama-3.3-70b-versatile",
-    messages: [
-      {
-        role: "user",
-        content: prompt,
-      },
-    ],
-  });
+    const completion = await groq.chat.completions.create({
+      model: "llama-3.3-70b-versatile",
+      messages: [
+        {
+          role: "user",
+          content: prompt,
+        },
+      ],
+      temperature: 0.2,
+    });
 
-  return completion.choices[0].message.content;
+    console.log("✅ Groq Success");
+
+    return completion.choices[0].message.content;
+
+  } catch (error) {
+
+    console.error("❌ GROQ ERROR");
+    console.error(error);
+
+    if (error.response) {
+      console.error("Status:", error.response.status);
+      console.error("Data:", error.response.data);
+    }
+
+    console.error("Message:", error.message);
+
+    throw error;
+  }
 };
