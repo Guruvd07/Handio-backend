@@ -4,6 +4,8 @@ const groq = new Groq({
   apiKey: process.env.GROQ_API_KEY,
 });
 
+console.log("GROQ KEY EXISTS:", !!process.env.GROQ_API_KEY);
+
 export const generateContent = async (prompt) => {
   try {
     const completion = await groq.chat.completions.create({
