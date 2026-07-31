@@ -131,6 +131,12 @@ app.use("/bookings", bookingRoutes);
 app.use("/reviews", reviewRoutes);
 app.use("/messages", messageRoutes);
 app.use("/api/ai", aiRoutes);
+app.post("/api/debug", (req, res) => {
+  res.json({
+    success: true,
+    body: req.body
+  });
+});
 app.use("/api/ai/chat", aiChatRoutes);
 
 /* ===========================
